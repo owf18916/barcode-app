@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <title>Barcode App</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 </head>
 <body class="p-6 bg-gray-100">
 
@@ -12,9 +14,77 @@
         {{ $slot }}
     </div>
 
+    {{-- @livewireScripts --}}
+
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.plugin(window.focus);
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('alpine:init', () => {
+                Alpine.plugin(window.focus);
+            });
+    
+            Livewire.on("swal-fired", (params) => {
+                const { title, message, type, footer = null } = params[0];
+    
+                Swal.fire({
+                    title: title,
+                    text: message,
+                    icon: type,
+                    confirmButtonText: "Ok",
+                    footer: footer
+                });
+            });
+
+            document.addEventListener("confirmation-fired", function (event) {
+                const { eventName, rowId = null, title = "Yakin ?", message =  "Tekan Ya jika Anda sudah yakin."} = event.detail
+    
+                Swal.fire({
+                    title: title,
+                    text: message,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.dispatch(eventName, { id: rowId });
+                    }
+                });
+            });
+    
+            document.addEventListener("info-fired", function (event) {
+                const { title = "Infromasi Penting", message =  ""} = event.detail
+    
+                Swal.fire({
+                    title: title,
+                    text: message,
+                    icon: "warning",
+                    showCancelButton: false,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "Ya",
+                })
+            });
+
+            Livewire.on("toast-fired", (params) => {
+                const { title, icon } = params[0];
+    
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    },
+                });
+    
+                Toast.fire({
+                    icon: icon,
+                    title: title,
+                });
+            });
         });
     </script>
 </body>

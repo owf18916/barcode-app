@@ -71,5 +71,4 @@
             <source src="{{ asset($result ? 'sounds/success.mp3' : 'sounds/error.mp3') }}" type="audio/mpeg">
         </audio>
     @endif
-
 </div>
