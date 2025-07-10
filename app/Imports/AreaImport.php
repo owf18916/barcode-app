@@ -24,7 +24,6 @@ class AreaImport implements
 
     public int $successCount = 0;
 
-    // Tambahkan ini di class
     protected array $names = [];
 
     public function model(array $row)

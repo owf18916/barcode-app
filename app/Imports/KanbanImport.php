@@ -5,16 +5,17 @@ namespace App\Imports;
 use App\Models\Area;
 use App\Models\Kanban;
 use App\Models\KanbanCategory;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Concerns\Importable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
-use Maatwebsite\Excel\Concerns\SkipsOnFailure;
-use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
-use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
 class KanbanImport implements
     ToModel,
@@ -30,6 +31,10 @@ class KanbanImport implements
     protected array $areaMap;
     protected array $categoryMap;
 
+    protected array $codes = [];
+
+    public static $failuresSessionKey = 'kanban_import_failures';
+
     public function __construct()
     {
         $this->areaMap = Area::pluck('id', 'name')->toArray();
@@ -38,6 +43,11 @@ class KanbanImport implements
 
     public function model(array $row)
     {
+        // Skip jika area/category tidak ditemukan
+        if (!isset($this->areaMap[$row['area']]) || !isset($this->categoryMap[$row['kanban_category']])) {
+            return null;
+        }
+
         return new Kanban([
             'code' => $row['code'],
             'kanban_category_id' => $this->categoryMap[$row['kanban_category']] ?? null,
@@ -52,7 +62,17 @@ class KanbanImport implements
     public function rules(): array
     {
         return [
-            'code' => ['required', Rule::unique('kanbans', 'code')],
+            'code' => ['required', Rule::unique('kanbans', 'code'),
+                function ($attribute, $value, $fail) {
+                    static $codes = [];
+
+                    if (in_array($value, $codes)) {
+                        $fail("Baris duplikat dalam file: $value");
+                    }
+
+                    $codes[] = $value;
+                },
+            ],
             'kanban_category' => [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -103,6 +123,18 @@ class KanbanImport implements
     public function batchSize(): int
     {
         return 500;
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            AfterImport::class => function (AfterImport $event) {
+                // simpan failures ke cache (karena tidak bisa ke session)
+                if ($this->failures()->isNotEmpty()) {
+                    cache()->put(self::$failuresSessionKey, $this->failures(), now()->addMinutes(10));
+                }
+            },
+        ];
     }
 }
 

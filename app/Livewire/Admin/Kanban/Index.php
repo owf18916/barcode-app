@@ -28,6 +28,9 @@ class Index extends Component
     public string $issue_number = '';
     public bool $is_active = true;
 
+    public bool $isImporting = false;
+    public bool $importFinished = false;
+
     public function updatingSearch() { $this->resetPage(); }
 
     public function applySearch() { $this->resetPage(); }
@@ -105,7 +108,6 @@ class Index extends Component
         ]);
 
         try {
-            sleep(2);
             $import = new KanbanImport();
             Excel::import($import, $this->excelFile);
 
