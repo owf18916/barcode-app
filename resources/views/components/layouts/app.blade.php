@@ -2,11 +2,10 @@
 <html lang="en" x-data @scan-result.window="($event.detail.success ? $refs.success.play() : $refs.fail.play())">
 <head>
     <meta charset="UTF-8" />
-    <title>Barcode App</title>
+    <title>JAI Kanban & S/A Scanner</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
-    {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 </head>
 <body class="p-6 bg-gray-100">
 
@@ -14,7 +13,12 @@
         {{ $slot }}
     </div>
 
-    {{-- @livewireScripts --}}
+    <div class="text-center mt-12 text-sm text-gray-400">
+        &copy; {{ now()->year }} Jatim Autocomp Indonesia. 
+        @unless(session()->has('admin_logged_in'))
+            <a href="{{ route('admin.login') }}" class="text-blue-500 hover:underline">Admin Login</a>
+        @endunless
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

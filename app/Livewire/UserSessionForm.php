@@ -2,12 +2,13 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Area;
+use Livewire\Component;
+use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Session;
 
 class UserSessionForm extends Component
-{
+{ 
     public $nik = '';
     public $areaSearch = '';
     public $selectedArea;

@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('kanbans', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
+            $table->foreignId('kanban_category_id');
+            $table->foreignId('area_id');
+            $table->string('conveyor')->nullable();
+            $table->string('family')->nullable();
+            $table->string('issue_number');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -39,7 +39,7 @@
                                 d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 100 16v-4l3.5 3.5L12 24v-4a8 8 0 01-8-8z">
                             </path>
                         </svg>
-                        <span wire:loading.remove wire:target="selectModule('barcode')">📦 Scan Barcode</span>
+                        <span wire:loading.remove wire:target="selectModule('barcode')">📦 Scan Barcode S/A</span>
                     </button>
                 </div>
 
@@ -62,6 +62,7 @@
                         <span wire:loading.remove wire:target="selectModule('kanban')">🏷️ Scan Kanban</span>
                     </button>
                 </div>
+                
             </div>
 
         </div>
