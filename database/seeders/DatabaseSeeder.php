@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AreaSeeder::class,
-            KanbanSeeder::class,
+            // KanbanSeeder::class,
         ]);
     }
 }

@@ -117,7 +117,7 @@ class Index extends Component
                 session()->forget('import_failures');
             }
 
-            $this->flashSuccess('Data kanban berhasil diupload.');
+            $this->flashSuccess('Data kanban sedang diproses import ke database. Silahkan tunggu notifikasi selanjutnya.');
         } catch (\Exception $e) {
             $this->flashError('Gagal upload data kanban.', $e->getMessage());
         }

@@ -9,13 +9,13 @@ class ScanKanban extends Model
 {
     use HasFactory;
 
-    protected $table = 'scan_kanban';
-
     protected $fillable = [
         'nik',
         'area_id',
         'kanban_id',
-        'is_valid',
+        'scanned_kanban',
+        'valid_kanban',
+        'valid_area',
     ];
 
     public function area()

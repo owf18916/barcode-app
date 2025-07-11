@@ -9,11 +9,11 @@
 </head>
 <body class="p-6 bg-gray-100">
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div class="max-w-4xl mx-auto px-4 mb-4 sm:px-6 lg:px-8 space-y-8">
         {{ $slot }}
     </div>
 
-    <div class="text-center mt-12 text-sm text-gray-400">
+    <div class="text-center text-sm text-gray-400">
         &copy; {{ now()->year }} Jatim Autocomp Indonesia. 
         @unless(session()->has('admin_logged_in'))
             <a href="{{ route('admin.login') }}" class="text-blue-500 hover:underline">Admin Login</a>

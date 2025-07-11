@@ -162,6 +162,10 @@
                 @endforelse
             </tbody>
         </table>
+
+        <div class="mx-4 my-6">
+            {{ $kanbans->onEachSide(2)->links() }}
+        </div>
     </div>
 
 </div>

@@ -10,19 +10,22 @@ use Illuminate\Support\Facades\Session;
 class UserSessionForm extends Component
 { 
     public $nik = '';
-    public $areaSearch = '';
+    public $areas;
+    public $area;
     public $selectedArea;
-    public $areaSearchInput = ''; // untuk input real-time
     public $message = '';
+    public $suggestions = [];
 
     public function mount()
     {
+        $this->areas = Area::all();
+
         // Ambil dari session jika ada
         $this->nik = session('nik', '');
         $this->selectedArea = session('area_id') ? Area::find(session('area_id')) : null;
 
-        // Cek timeout: misal, jika lebih dari 10 menit idle, reset session
-        if (now()->diffInMinutes(session('last_activity', now())) > 10) {
+        // Cek timeout: misal, jika lebih dari 5 menit idle, reset session
+        if (now()->diffInMinutes(session('last_activity', now())) > 5) {
             session()->forget(['nik', 'area_id', 'last_activity']);
             $this->nik = '';
             $this->selectedArea = null;
@@ -36,37 +39,21 @@ class UserSessionForm extends Component
         $this->message = 'NIK berhasil disimpan.';
     }
 
-    public function selectArea($id)
+    public function setArea()
     {
-        $area = Area::find($id);
+        $this->selectedArea = Area::find($this->area);
 
-        if ($area) {
-            $this->selectedArea = $area;
-            $this->areaSearchInput = $area->name;
-            $this->areaSearch = $area->name;
+        session([
+            'area_id' => $this->area,
+            'last_activity' => now(),
+        ]);
 
-            session([
-                'area_id' => $area->id,
-                'last_activity' => now(),
-            ]);
-
-            $this->message = 'Area berhasil disimpan.';
-        } else {
-            $this->addError('areaSearchInput', 'Area tidak ditemukan.');
-        }
+        $this->message = 'Area berhasil disimpan.';
     }
 
     public function render()
     {
-        $suggestions = [];
-
-        if (strlen($this->areaSearchInput) >= 2 && !$this->selectedArea) {
-            $suggestions = Area::where('name', 'like', '%' . $this->areaSearchInput . '%')->limit(10)->get();
-        }
-
-        return view('livewire.user-session-form', [
-            'suggestions' => $suggestions
-        ]);
+        return view('livewire.user-session-form');
     }
 }
 

@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
              $table->string('nik');
             $table->foreignId('area_id')->constrained();
-            $table->foreignId('kanban_id')->constrained();
-            $table->boolean('is_valid')->default(false);   // apakah kanban aktif
+            $table->foreignId('kanban_id')->nullable();
+            $table->string('kanban_code');
+            $table->boolean('valid_kanban')->default(false);   // apakah kanban aktif
+            $table->boolean('valid_area')->default(false);   // apakah area valid
             $table->timestamps();
         });
     }
