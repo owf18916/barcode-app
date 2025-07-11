@@ -15,9 +15,15 @@
 
     <div class="text-center text-sm text-gray-400">
         &copy; {{ now()->year }} Jatim Autocomp Indonesia. 
-        @unless(session()->has('admin_logged_in'))
+        @if(!session()->has('admin_logged_in') && !Route::is('admin.login'))
             <a href="{{ route('admin.login') }}" class="text-blue-500 hover:underline">Admin Login</a>
-        @endunless
+        @else
+            @if(Route::is('admin.*'))
+            <a href="{{ route('home') }}" class="text-blue-500 hover:underline">Home</a>
+            @else
+            <a href="{{ route('admin.dashboard') }}" class="text-blue-500 hover:underline">Dashboard Admin</a>
+            @endif
+        @endif
     </div>
 
     <script>

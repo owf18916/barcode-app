@@ -1,5 +1,11 @@
 <div class="space-y-6">
-    <h1 class="text-2xl font-bold text-gray-800">Master Kanban</h1>
+    <div class="justify-between">
+        <h1 class="text-2xl font-bold text-gray-800">Master Kanban</h1>
+
+        <div class="text-right">
+            <a href="{{ route('admin.dashboard') }}" wire:navigate class="text-sm text-red-500 hover:underline">← Kembali</a>
+        </div>
+    </div>
 
     {{-- Form Kanban --}}
     <div class="bg-white p-4 rounded shadow space-y-4">
@@ -71,8 +77,6 @@
         </div>
     </div>
 
-
-
     {{-- Upload Excel --}}
     <div class="bg-white p-6 rounded shadow border border-gray-200 space-y-4">
 
@@ -106,7 +110,6 @@
 
     </div>
 
-
     {{-- Daftar Kanban --}}
     <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
         <div class="flex items-center justify-between mb-4 p-2">
@@ -117,7 +120,7 @@
                 wire:model.defer="search"
                 wire:keydown.enter="applySearch"
                 placeholder="Cari kanban code..."
-                class="border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-200 w-64"
+                class="border-2 border-gray-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-200 w-64"
             />
         </div>
 

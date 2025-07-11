@@ -1,5 +1,11 @@
 <div class="space-y-6">
-    <h1 class="text-2xl font-bold text-gray-800">Master Area</h1>
+    <div class="justify-between">
+        <h1 class="text-2xl font-bold text-gray-800">Master Area</h1>
+
+        <div class="text-right">
+            <a href="{{ route('admin.dashboard') }}" wire:navigate class="text-sm text-red-500 hover:underline">← Kembali</a>
+        </div>
+    </div>
 
     {{-- Form Area --}}
     <div class="bg-white p-4 rounded shadow space-y-4">
@@ -78,7 +84,7 @@
                 wire:model.defer="search"
                 wire:keydown.enter="applySearch"
                 placeholder="Cari nama area..."
-                class="border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-200 w-64"
+                class="border-2 border-gray-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-200 w-64"
             />
         </div>
 

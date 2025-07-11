@@ -19,9 +19,9 @@
         </a>
 
         {{-- Hasil Scan --}}
-        <a href="{{ route('admin.scan-results') }}" wire:navigate class="p-6 bg-white shadow rounded border hover:bg-gray-50 text-center">
-            <h3 class="font-semibold text-lg text-gray-800">📥 Hasil Scan</h3>
-            <p class="text-sm text-gray-600 mt-2">Filter dan export hasil scan ke Excel.</p>
+        <a href="{{ route('admin.result-kanban') }}" wire:navigate class="p-6 bg-white shadow rounded border hover:bg-gray-50 text-center">
+            <h3 class="font-semibold text-lg text-gray-800">📥 Hasil Scan Kanban</h3>
+            <p class="text-sm text-gray-600 mt-2">Tabel hasil scan dan export hasil scan ke Excel.</p>
         </a>
 
     </div>
