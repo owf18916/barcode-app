@@ -16,7 +16,7 @@ return new class extends Migration
              $table->string('nik');
             $table->foreignId('area_id')->constrained();
             $table->foreignId('kanban_id')->nullable();
-            $table->string('kanban_code');
+            $table->string('scanned_kanban');
             $table->boolean('valid_kanban')->default(false);   // apakah kanban aktif
             $table->boolean('valid_area')->default(false);   // apakah area valid
             $table->timestamps();
