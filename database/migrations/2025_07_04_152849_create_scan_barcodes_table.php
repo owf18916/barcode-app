@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('barcode2');
             $table->string('barcode3');
             $table->boolean('is_match')->default(false);   // Apakah hasil scan cocok
+            $table->timestamp('scanned_at')->nullable();
             $table->timestamps();
         });
     }

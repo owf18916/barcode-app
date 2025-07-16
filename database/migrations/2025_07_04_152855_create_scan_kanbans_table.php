@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('scanned_kanban');
             $table->boolean('valid_kanban')->default(false);   // apakah kanban aktif
             $table->boolean('valid_area')->default(false);   // apakah area valid
+            $table->timestamp('scanned_at');
             $table->timestamps();
         });
     }
