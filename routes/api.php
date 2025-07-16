@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AreaController;
 use App\Http\Controllers\Api\ScanController;
+use App\Http\Controllers\Api\MasterDataController;
 
 // Public API routes for Server#1
 Route::get('/areas', [MasterDataController::class, 'getAreas']);
