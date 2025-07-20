@@ -4,10 +4,11 @@ namespace App\Livewire\Admin\Area;
 
 use App\Models\Area;
 use Livewire\Component;
-use App\Imports\AreaImport;
 use App\Traits\Swalable;
+use App\Imports\AreaImport;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use App\Services\WebhookService;
 use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends Component
@@ -19,6 +20,50 @@ class Index extends Component
     public $areaIdBeingEdited = null;
     public $excelFile;
     public string $search = '';
+
+    protected WebhookService $webhookService;
+
+    public function boot(WebhookService $webhookService)
+    {
+        $this->webhookService = $webhookService;
+    }
+
+        // --- PERUBAHAN DI SINI UNTUK SINKRONISASI MANUAL ---
+    public function syncAreasToLocalServer()
+    {
+        try {
+            $pendingAreas = $this->webhookService->getUnsyncedMasterRecords('area');
+            
+            if ($pendingAreas->isEmpty()) {
+                $this->flashInfo('Tidak ada data Area yang perlu disinkronkan.');
+                return;
+            }
+
+            // Kumpulkan semua data yang perlu disinkronkan ke dalam satu array
+            $dataToSend = $pendingAreas->map(fn($area) => $area->toArray())->all();
+            
+            // Kirim semua data dalam satu request batch
+            $success = $this->webhookService->sendMasterBatchUpdate('area', 'batch_upsert', $dataToSend);
+
+            if ($success) {
+                // Jika pengiriman batch berhasil, tandai semua record sebagai synced
+                $syncedCount = 0;
+                foreach ($pendingAreas as $area) {
+                    if ($this->webhookService->markMasterRecordAsSynced('area', $area->id)) {
+                        $syncedCount++;
+                    } else {
+                        \Illuminate\Support\Facades\Log::warning("Failed to mark Area ID: {$area->id} as synced after successful batch webhook.");
+                    }
+                }
+                $this->flashSuccess("{$syncedCount} Area berhasil disinkronkan ke Server #1.");
+            } else {
+                $this->flashError("Gagal sinkronisasi Area ke Server #1.", "Periksa log untuk detail lebih lanjut.");
+            }
+        } catch (\Exception $e) {
+            $this->flashError("Terjadi kesalahan umum saat sinkronisasi Area.", $e->getMessage());
+            \Illuminate\Support\Facades\Log::error("Manual Sync Pending Areas Batch Error: " . $e->getMessage());
+        }
+    }
 
     public function save()
     {

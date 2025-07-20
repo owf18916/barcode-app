@@ -115,13 +115,23 @@
         <div class="flex items-center justify-between mb-4 p-2">
             <h2 class="text-xl font-semibold text-gray-800">📁 Daftar Kanban</h2>
 
-            <input
-                type="text"
-                wire:model.defer="search"
-                wire:keydown.enter="applySearch"
-                placeholder="Cari kanban code..."
-                class="border-2 border-gray-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-200 w-64"
-            />
+            <div class="flex space-x-3">
+                <button 
+                    class="px-4 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed" 
+                    wire:click="syncKanbansToLocalServer" 
+                    wire:loading.attr="disabled"
+                >
+                    <span wire:loading.remove wire:target="syncKanbansToLocalServer">Sync Kanban</span>
+                    <span wire:loading wire:target="syncKanbansToLocalServer">Syncing...</span>
+                </button>
+                <input
+                    type="text"
+                    wire:model.defer="search"
+                    wire:keydown.enter="applySearch"
+                    placeholder="Cari kanban code..."
+                    class="border-2 border-gray-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-indigo-200 w-64"
+                />
+            </div>
         </div>
 
         <table class="min-w-full divide-y divide-gray-200">

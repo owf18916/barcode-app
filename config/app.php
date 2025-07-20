@@ -123,4 +123,14 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Configuration for Server #1
+    |--------------------------------------------------------------------------
+    */
+    'server1_webhooks' => [
+        'secret_key' => env('SERVER1_WEBHOOK_SECRET_KEY'),
+        'area_url' => env('SERVER1_WEBHOOK_AREA_URL'),
+        'kanban_url' => env('SERVER1_WEBHOOK_KANBAN_URL'),
+    ],
 ];

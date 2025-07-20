@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Admin\Kanban;
 
-use App\Models\Kanban;
 use App\Models\Area;
-use App\Models\KanbanCategory;
+use App\Models\Kanban;
 use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use App\Imports\KanbanImport;
 use App\Traits\Swalable;
+use Livewire\WithPagination;
+use App\Imports\KanbanImport;
+use Livewire\WithFileUploads;
+use App\Models\KanbanCategory;
+use App\Services\WebhookService;
 use Maatwebsite\Excel\Facades\Excel;
 
 class Index extends Component
@@ -30,6 +31,51 @@ class Index extends Component
 
     public bool $isImporting = false;
     public bool $importFinished = false;
+
+    protected WebhookService $webhookService; // Declare the property
+
+    // Inject the service via constructor
+    public function boot(WebhookService $webhookService)
+    {
+        $this->webhookService = $webhookService;
+    }
+
+    // --- PERUBAHAN DI SINI UNTUK SINKRONISASI MANUAL ---
+    public function syncKanbansToLocalServer()
+    {
+        try {
+            $pendingKanbans = $this->webhookService->getUnsyncedMasterRecords('kanban');
+            
+            if ($pendingKanbans->isEmpty()) {
+                $this->flashInfo('Tidak ada data Kanban yang perlu disinkronkan.');
+                return;
+            }
+
+            // Kumpulkan semua data yang perlu disinkronkan ke dalam satu array
+            $dataToSend = $pendingKanbans->map(fn($kanban) => $kanban->toArray())->all();
+            
+            // Kirim semua data dalam satu request batch
+            $success = $this->webhookService->sendMasterBatchUpdate('kanban', 'batch_upsert', $dataToSend);
+
+            if ($success) {
+                // Jika pengiriman batch berhasil, tandai semua record sebagai synced
+                $syncedCount = 0;
+                foreach ($pendingKanbans as $kanban) {
+                    if ($this->webhookService->markMasterRecordAsSynced('kanban', $kanban->id)) {
+                        $syncedCount++;
+                    } else {
+                        \Illuminate\Support\Facades\Log::warning("Failed to mark Kanban ID: {$kanban->id} as synced after successful batch webhook.");
+                    }
+                }
+                $this->flashSuccess("{$syncedCount} Kanban berhasil disinkronkan ke Server #1.");
+            } else {
+                $this->flashError("Gagal sinkronisasi Kanban ke Server #1.", "Periksa log untuk detail lebih lanjut.");
+            }
+        } catch (\Exception $e) {
+            $this->flashError("Terjadi kesalahan umum saat sinkronisasi Kanban.", $e->getMessage());
+            \Illuminate\Support\Facades\Log::error("Manual Sync Pending Kanbans Batch Error: " . $e->getMessage());
+        }
+    }
 
     public function updatingSearch() { $this->resetPage(); }
 

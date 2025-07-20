@@ -20,7 +20,7 @@ class MasterDataController extends Controller
     public function getMasterKanbans()
     {
         // Ambil semua kanban aktif atau sesuai kebutuhan. Pastikan ada area_id dan status.
-        $kanbans = Kanban::select(['code', 'area_id', 'is_active'])->get(); // Sesuaikan query jika perlu filter/join
+        $kanbans = Kanban::select(['id', 'code', 'area_id', 'is_active'])->get(); // Sesuaikan query jika perlu filter/join
         return response()->json(['success' => true, 'data' => $kanbans]);
     }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('issue_number');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->timestamp('synced_at')->nullable();
         });
     }
 

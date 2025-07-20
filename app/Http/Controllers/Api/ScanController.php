@@ -167,11 +167,11 @@ class ScanController extends Controller
                     $kanbansToInsert[] = [
                         'nik' => $scanData['nik'],
                         'area_id' => $scanData['area_id'],
-                        'kanban_code' => $scanData['kanban_code'],
+                        'kanban_id' => $scanData['kanban_id'],
+                        'scanned_kanban' => $scanData['kanban_code'],
                         'valid_kanban' => $scanData['valid_kanban_local'] ?? false,
                         'valid_area' => $scanData['valid_area_local'] ?? false,
-                        'scanned_at' => $scanData['scan_timestamp'], // Gunakan timestamp asli dari client
-                        'local_client_log_id' => $localLogId,
+                        'scanned_at' => $scanData['scan_timestamp'],
                         'created_at' => $now,
                     ];
                     
@@ -202,6 +202,8 @@ class ScanController extends Controller
             if (!empty($kanbansToInsert)) {
                 ScanKanban::insert($kanbansToInsert);
             }
+
+            Log::info('scan-insertion', ['barcode' => $barcodesToInsert, 'kanban' => $kanbansToInsert]);
 
         } catch (\Exception $e) {
             Log::error("Error performing mass insertion for scans: " . $e->getMessage());
