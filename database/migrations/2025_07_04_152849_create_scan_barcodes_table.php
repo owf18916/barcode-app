@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('is_match')->default(false);   // Apakah hasil scan cocok
             $table->timestamp('scanned_at')->nullable();
             $table->timestamps();
+            $table->timestamp('synced_at')->nullable();
         });
     }
 

@@ -124,6 +124,24 @@
                     <span wire:loading.remove wire:target="syncKanbansToLocalServer">Sync Kanban</span>
                     <span wire:loading wire:target="syncKanbansToLocalServer">Syncing...</span>
                 </button>
+<!--                 <div x-data="{ syncing: false }" x-init="
+                    window.Livewire.hook('message.sent', ({ method }) => {
+                        if (method === 'syncKanbansToLocalServer') syncing = true
+                    })
+                    window.Livewire.hook('message.processed', ({ method }) => {
+                        if (method === 'syncKanbansToLocalServer') syncing = false
+                    })
+                ">
+                    <button
+                        @click="confirmSyncKanban()"
+                        :disabled="syncing"
+                        class="px-4 py-2 bg-red-400 text-white rounded-md hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <span x-show="!syncing">Sync Kanban</span>
+                        <span x-show="syncing">Syncing...</span>
+                    </button>
+                </div> -->
+
                 <input
                     type="text"
                     wire:model.defer="search"
@@ -181,4 +199,22 @@
         </div>
     </div>
 
+    <script>
+        function confirmSyncKanban() {
+            Swal.fire({
+                title: 'Apakah kamu yakin?',
+                text: "Data akan disinkronkan ke server STO, tolong jangan tutup halaman ini atau memproses hal lain.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, sync sekarang!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.Livewire.dispatch('syncKanbansToLocalServer');
+                }
+            });
+        }
+    </script>
 </div>

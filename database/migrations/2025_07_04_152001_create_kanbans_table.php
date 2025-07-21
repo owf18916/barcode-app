@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('conveyor')->nullable();
             $table->string('family')->nullable();
             $table->string('issue_number');
+            $table->string('address_store');
+            $table->string('address_rack');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->timestamp('synced_at')->nullable();

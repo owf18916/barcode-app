@@ -12,6 +12,7 @@ use Livewire\WithFileUploads;
 use App\Models\KanbanCategory;
 use App\Services\WebhookService;
 use Maatwebsite\Excel\Facades\Excel;
+use Livewire\Attributes\On;
 
 class Index extends Component
 {
@@ -41,6 +42,7 @@ class Index extends Component
     }
 
     // --- PERUBAHAN DI SINI UNTUK SINKRONISASI MANUAL ---
+    #[On('syncKanbansToLocalServer')]
     public function syncKanbansToLocalServer()
     {
         try {
@@ -59,15 +61,12 @@ class Index extends Component
 
             if ($success) {
                 // Jika pengiriman batch berhasil, tandai semua record sebagai synced
-                $syncedCount = 0;
-                foreach ($pendingKanbans as $kanban) {
-                    if ($this->webhookService->markMasterRecordAsSynced('kanban', $kanban->id)) {
-                        $syncedCount++;
-                    } else {
-                        \Illuminate\Support\Facades\Log::warning("Failed to mark Kanban ID: {$kanban->id} as synced after successful batch webhook.");
-                    }
-                }
-                $this->flashSuccess("{$syncedCount} Kanban berhasil disinkronkan ke Server #1.");
+                $kanbanIds = $pendingKanbans->pluck('id')->all();
+
+                $updatedCount = \App\Models\Kanban::whereIn('id', $kanbanIds)
+                    ->update(['synced_at' => now()]);
+
+                $this->flashSuccess("{$updatedCount} Kanban berhasil disinkronkan ke Server #1.");
             } else {
                 $this->flashError("Gagal sinkronisasi Kanban ke Server #1.", "Periksa log untuk detail lebih lanjut.");
             }
