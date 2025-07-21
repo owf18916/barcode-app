@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\ScanKanban;
 use App\Models\Kanban;
 use App\Traits\Swalable;
+use Illuminate\Support\Facades\Log;
 
 class ScanKanbanForm extends Component
 {
@@ -23,6 +24,8 @@ class ScanKanbanForm extends Component
         $kanban = Kanban::where('code', $this->kanbanCode)->first();
 
         if(!empty($kanban)) {
+            // Log::info('kanban-scan', ['kanban' => $kanban, 'session_area_id' => session('area_id'), 'area_truthy' => $kanban->area_id != session('area_id')]);
+
             $kanbanId = $kanban->id;
 
             if (!$kanban->is_active) {
@@ -30,7 +33,7 @@ class ScanKanbanForm extends Component
                 $this->errorMessages[] = 'Kanban tidak aktif.';
             }
 
-            if ($kanban->area_id !== session('area_id')) {
+            if ($kanban->area_id != session('area_id')) {
                 $this->validArea = false;
                 $this->errorMessages[] = 'Area tidak sama dengan database kanban, database kanban : '.$kanban->area->name;
             }
@@ -58,8 +61,8 @@ class ScanKanbanForm extends Component
             }
 
             $errorStack.'</ul>';
-
-            $this->flashError('Scan Gagal Periksa Kembali Error berikut : ', $errorStack);
+            
+            $this->flashError('Hasil scan tidak sesuai. Periksa kembali error berikut : ', $errorStack);
         } else {
             $this->toastSuccess('Scan berhasil.');
         }
