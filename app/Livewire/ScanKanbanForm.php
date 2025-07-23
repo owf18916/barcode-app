@@ -44,14 +44,20 @@ class ScanKanbanForm extends Component
             $kanbanId = null;
         }
 
-        ScanKanban::create([
-            'nik' => session('nik'),
-            'area_id' => session('area_id'),
-            'kanban_id' => $kanbanId,
-            'scanned_kanban' => $this->kanbanCode,
-            'valid_kanban' => $this->validKanban,
-            'valid_area' => $this->validArea
-        ]);
+        ScanKanban::updateOrCreate(
+            [
+                'scanned_kanban' => $this->kanbanCode,
+                'area_id' => session('area_id'),
+            ],
+            [
+                'nik' =>session('nik'),
+                'kanban_id' => $kanbanId,
+                'valid_kanban' => $this->validKanban,
+                'valid_area' => $this->validArea
+            ]
+        );
+
+
 
         if (!empty($this->errorMessages)) {
             $errorStack = '<ul>';
@@ -62,7 +68,7 @@ class ScanKanbanForm extends Component
 
             $errorStack.'</ul>';
             
-            $this->flashError('Hasil scan tidak sesuai. Periksa kembali error berikut : ', $errorStack);
+            $this->flashWarning('Hasil scan direkam, dengan data yang tidak sesuai. Periksa kembali data berikut : ', $errorStack);
         } else {
             $this->toastSuccess('Scan berhasil.');
         }

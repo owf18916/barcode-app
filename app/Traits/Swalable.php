@@ -15,6 +15,10 @@ trait Swalable {
         $this->setupFlash("Info", $message, 'info', $footer);
     }
 
+    public function flashWarning($message, $footer = null) {
+        $this->setupFlash("Perhatian !", $message, 'warning', $footer);
+    }
+
     public function toastSuccess($title) {
         $this->setupToast('success', $title);
     }
